@@ -1,96 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/user.model");
-const e = require("express");
+const {
+  register,
+  login,
+  getUser,
+  logout,
+} = require("../controllers/controllers");
 
-// Register
-router.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+router.post("/register", register);
 
-  const isUserAvailable = await userModel.findOne({ username });
+router.post("/login", login);
 
-  if (isUserAvailable) {
-    return res.status(409).json({ error: "User already exists" });
-  }
+router.get("/user", getUser);
 
-  const newUser = new userModel({ username, password });
-  newUser
-    .save()
-    .then(() => {
-      const token = jwt.sign(
-        { id: newUser._id, username: newUser.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
-      );
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      });
-      res.status(201).json({ message: "User registered successfully" });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: "User registration failed" });
-    });
-});
-
-// Login
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  const user = await userModel.findOne({ username });
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
-
-  const isMatch = (await user.password) === password;
-  if (isMatch) {
-    const token = jwt.sign(
-      { id: user._id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-    });
-
-    res.status(200).json({ message: "Login successful" });
-  } else {
-    res.status(401).json({ error: "Incorrect password" });
-  }
-});
-
-// User
-router.get("/user", async (req, res) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const user = await userModel.findById(decoded.id).select("-__v");
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.status(200).json({ user: { id: user._id, username: user.username, password: user.password } });
-  });
-});
-
-// Logout
-router.get("/logout", async (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logout successful" });
-});
+router.get("/logout", logout);
 
 module.exports = router;
