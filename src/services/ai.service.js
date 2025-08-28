@@ -20,10 +20,10 @@ async function captionGen(base64ImageFile) {
     contents: contents,
     config: {
       systemInstruction:
-        "You are a captioning AI. Generate a caption for the image. Generate a caption that is creative and contextually relevant and on the topic of the image. Keep it short and at the last use some emojis and hashtags.",
+        "You are a captioning AI. Make a bangla crazy caption short sentence with emojis & ending will be some hashtags.",
     },
   });
-  return response;
+  return response.text;
 }
 
 module.exports = {

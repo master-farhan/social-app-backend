@@ -1,14 +1,23 @@
 const postModel = require("../models/post.model");
 const captionGen = require("../services/ai.service").captionGen;
+const uploadImage = require("../services/storage.service").uploadImage;
+const { v4: uuid } = require("uuid");
 
 async function createPost(req, res) {
   const file = req.file;
-  console.log("file", file);
 
-  const base64ImageFile = new Buffer.from(file.buffer).toString("base64");
-  const caption = await captionGen(base64ImageFile);
+  const base64Image = new Buffer.from(file.buffer).toString("base64");
+  const caption = await captionGen(base64Image);
 
-  res.json({ caption: caption.candidates[0].content.parts[0].text });
+  const result = await uploadImage(base64Image, `${uuid()}`);
+
+  const post = new postModel({
+    caption: caption,
+    imageUrl: result.url,
+    user: req.user._id,
+  });
+  await post.save();
+  res.status(201).json({ caption, imageUrl: result.url, user: req.user._id });
 }
 
 module.exports = {
