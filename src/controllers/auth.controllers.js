@@ -44,7 +44,7 @@ async function login(req, res) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  const isMatch = (await user.password) === password;
+  const isMatch = await bcrypt.compare(password, user.password);
   if (isMatch) {
     const token = jwt.sign(
       { id: user._id, username: user.username },
