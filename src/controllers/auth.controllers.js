@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
+const bcrypt = require("bcrypt");
 
 async function register(req, res) {
   const { username, password } = req.body;
@@ -10,7 +11,7 @@ async function register(req, res) {
     return res.status(409).json({ error: "User already exists" });
   }
 
-  const newUser = new userModel({ username, password });
+  const newUser = new userModel({ username, password: await bcrypt.hash(password, 10) });
   newUser
     .save()
     .then(() => {
@@ -22,8 +23,11 @@ async function register(req, res) {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production", // dev এ false, production এ true
+        sameSite: "None", // cross-origin এর জন্য mandatory
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
+
       res.status(201).json({ message: "User registered successfully" });
     })
     .catch((err) => {
@@ -50,7 +54,9 @@ async function login(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // dev এ false, production এ true
+      sameSite: "None", // cross-origin এর জন্য mandatory
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(200).json({ message: "Login successful" });
@@ -71,13 +77,18 @@ async function getUser(req, res) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const user = await userModel.findById(decoded.id).select("-__v");
+    const user = await userModel.findById(decoded.id).select("-password -__v");
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ user: { id: user._id, username: user.username, password: user.password } });
+    res.status(200).json({
+      user: {
+        id: user._id,
+        username: user.username,
+      },
+    });
   });
 }
 

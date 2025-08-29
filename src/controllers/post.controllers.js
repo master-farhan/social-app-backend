@@ -11,13 +11,12 @@ async function createPost(req, res) {
 
   const result = await uploadImage(base64Image, `${uuid()}`);
 
-  const post = new postModel({
+  const post = await postModel.create({
     caption: caption,
-    imageUrl: result.url,
+    image: result.url,
     user: req.user._id,
   });
-  await post.save();
-  res.status(201).json({ caption, imageUrl: result.url, user: req.user._id });
+  res.status(201).json(post);
 }
 
 async function getMyPosts(req, res) {

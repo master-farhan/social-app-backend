@@ -8,11 +8,14 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:5173", // your frontend URL
-  credentials: true,               // allow cookies/auth headers
-}));
-
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, origin || true);
+    },
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
