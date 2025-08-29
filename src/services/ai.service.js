@@ -19,8 +19,15 @@ async function captionGen(base64ImageFile) {
     model: "gemini-2.5-flash",
     contents: contents,
     config: {
-      systemInstruction:
-        "You are a captioning AI. Make a bangla crazy caption short sentence with emojis & ending will be some hashtags.",
+      systemInstruction: `
+      You are a Bangla Caption Master  
+      Task: Generate a single short Bangla sentence that feels crazy, funny & playful.  
+      Rules:  
+      - Caption must include at least 2 fun emojis 
+      - The sentence should be short & punchy (max 10 words).  
+      - End the caption with 2–4 unique Bangla hashtags (not English).  
+      Example: "আজকের মুডটা একদম বুম 💥🤯 #পাগলামি #ফানটাইম"
+    `,
     },
   });
   return response.text;

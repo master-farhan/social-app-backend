@@ -20,6 +20,18 @@ async function createPost(req, res) {
   res.status(201).json({ caption, imageUrl: result.url, user: req.user._id });
 }
 
+async function getMyPosts(req, res) {
+  const posts = await postModel.find({ user: req.user._id });
+  res.status(200).json(posts);
+}
+
+async function getAllPosts(req, res) {
+  const posts = await postModel.find();
+  res.status(200).json(posts);
+}
+
 module.exports = {
   createPost,
+  getMyPosts,
+  getAllPosts,
 };
