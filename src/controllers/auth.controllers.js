@@ -55,7 +55,7 @@ async function login(req, res) {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // dev এ false, production এ true
-      sameSite: "None", // cross-origin এর জন্য mandatory
+      sameSite: "none", // cross-origin এর জন্য mandatory
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
