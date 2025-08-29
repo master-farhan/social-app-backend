@@ -15,6 +15,6 @@ router.post(
 
 router.get("/my", authMiddleware, postController.getMyPosts);
 
-router.get("/all", postController.getAllPosts);
+router.get("/all", authMiddleware, postController.getAllPosts);
 
 module.exports = router;
