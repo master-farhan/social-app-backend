@@ -11,7 +11,10 @@ async function register(req, res) {
     return res.status(409).json({ error: "User already exists" });
   }
 
-  const newUser = new userModel({ username, password: await bcrypt.hash(password, 10) });
+  const newUser = new userModel({
+    username,
+    password: await bcrypt.hash(password, 10),
+  });
   newUser
     .save()
     .then(() => {
@@ -23,9 +26,8 @@ async function register(req, res) {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // dev এ false, production এ true
-        sameSite: "None", // cross-origin এর জন্য mandatory
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "None",
       });
 
       res.status(201).json({ message: "User registered successfully" });
@@ -54,9 +56,8 @@ async function login(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // dev এ false, production এ true
-      sameSite: "none", // cross-origin এর জন্য mandatory
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     });
 
     res.status(200).json({ message: "Login successful" });
