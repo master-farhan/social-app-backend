@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", 
+    origin: "https://auto-caption-three.vercel.app", 
     credentials: true,
   })
 );
