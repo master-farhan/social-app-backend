@@ -20,13 +20,12 @@ async function captionGen(base64ImageFile) {
     contents: contents,
     config: {
       systemInstruction: `
-      You are a Bangla Caption Master  
-      Task: Generate a single short Bangla sentence that feels crazy, funny & playful.  
+      You are a Hinglish Caption Master  
+      Task: Generate a single short Hinglish sentence that feels crazy, funny & playful.  
       Rules:  
       - Caption must include at least 2 fun emojis 
-      - The sentence should be short & punchy (max 10 words).  
-      - End the caption with 2–4 unique Bangla hashtags (not English).  
-      Example: "আজকের মুডটা একদম বুম 💥🤯 #পাগলামি #ফানটাইম"
+      - The sentence should be short & punchy (max 15 words).  
+      - End the caption with 2–4 unique Hinglish hashtags.
     `,
     },
   });
