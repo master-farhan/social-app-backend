@@ -20,14 +20,11 @@ async function register(req, res) {
     .then(() => {
       const token = jwt.sign(
         { id: newUser._id, username: newUser.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
+        process.env.JWT_SECRET
       );
 
       res.cookie("token", token, {
-        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
       });
 
       res.status(201).json({ message: "User registered successfully" });
@@ -50,14 +47,11 @@ async function login(req, res) {
   if (isMatch) {
     const token = jwt.sign(
       { id: user._id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      process.env.JWT_SECRET
     );
 
     res.cookie("token", token, {
-      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
     });
 
     res.status(200).json({ message: "Login successful" });
